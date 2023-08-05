@@ -24,8 +24,15 @@ def add_author():
         name = request.form.get('name')
         birth_date = request.form.get('birthdate')
         date_of_death = request.form.get('date_of_death')
-        # data_manager.add_user(user_details)
-        # return "Registration successful!"
+        # Create a new Author object with the form data
+        new_author = Author(name=name, birth_date=birth_date, \
+            date_of_death=date_of_death)
+
+        # Add the Author to the database
+        db.session.add(new_author)
+        db.session.commit()
+
+        return "The author has been added successfully!"
 
     # Render the "add author" form template for GET requests
     return render_template('add_author.html')
@@ -37,7 +44,14 @@ def add_book():
         title = request.form.get('title')
         publication_year = request.form.get('publication_year')
         author_id = request.form.get('author_id')
-        # data_manager.add_user(user_details)
+        # Create a new Book object with the form data
+        new_book = Book(isbn=isbn, title=title,\
+             publication_year=publication_year, author_id=author_id)
+
+        # Add the Book to the database
+        db.session.add(new_book)
+        db.session.commit()
+
         return "The book has been added successfully!"
 
     # Render the "add book" form template for GET requests

@@ -1,4 +1,3 @@
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Date, ForeignKey, Integer, String
 from app import app, db  # Import db instance from app.py
 
@@ -17,7 +16,6 @@ class Author(db.Model):
 
     def __repr__(self):
         return f"Author(id = {self.id}, name = {self.name})"
-    
     def __str__(self):
         """
         Returns a human-readable string representation of the Author.
