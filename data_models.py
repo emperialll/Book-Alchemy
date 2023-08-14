@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Date, ForeignKey, Integer, String
 from app import app, db  # Import db instance from app.py
 
+
 class Author(db.Model):
     """
     The "Author" Python class defines the authors table in the database.
@@ -16,10 +17,10 @@ class Author(db.Model):
 
     def __repr__(self):
         return f"Author(id = {self.id}, name = {self.name})"
+
     def __str__(self):
         """
         Returns a human-readable string representation of the Author.
-
         Returns:
             str: A formatted string representing the Author's details.
         """
@@ -58,7 +59,6 @@ class Book(db.Model):
     def __str__(self):
         """
         Returns a human-readable string representation of the Book.
-
         Returns:
             str: A formatted string representing the Book's details.
         """
@@ -66,7 +66,7 @@ class Book(db.Model):
             Title: {self.title}\nPublication Year: {self.publication_year}\nA\
                 uthor ID: {self.author_id}"
 
-if __name__ == '__main__':
-    # Create the new tables
-    with app.app_context():
-        db.create_all()
+# if __name__ == '__main__':
+#     # Create the new tables
+#     with app.app_context():
+#         db.create_all()
