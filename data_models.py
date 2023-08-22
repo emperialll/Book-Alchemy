@@ -66,7 +66,8 @@ class Book(db.Model):
             Title: {self.title}\nPublication Year: {self.publication_year}\nA\
                 uthor ID: {self.author_id}"
 
-# if __name__ == '__main__':
-#     # Create the new tables
-#     with app.app_context():
-#         db.create_all()
+
+if __name__ == '__main__':
+    # Create the new tables
+    with app.app_context():
+        db.create_all()
