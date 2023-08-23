@@ -1,17 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  </head>
-  <body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <style>
+    .book-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .book-box {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      width: calc(20% - 20px); /* 20% width with margins subtracted */
+      box-sizing: border-box;
+    }
+    .book-image {
+      max-width: 100px;
+      max-height: 150px;
+      height: auto;
+    }
+    .sort-controls,
+    .search-form {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
 
+  <!-- Sorting controls -->
+  <div class="sort-controls">
+    <label for="sort-select">Sort by:</label>
+    <select id="sort-select">
+      <option value="title">Title</option>
+      <option value="name">Author</option>
+    </select>
+  </div>
+
+  <!-- Search form -->
+  <div class="search-form">
+    <form action="/" method="post">
+      <input type="text" name="query" placeholder="Search books...">
+      <button type="submit">Search</button>
+      <button type="button" onclick="clearSearch()">Clear</button>
+    </form>
+  </div>
+
+  <div class="book-container">
     {% for book in books %}
-    <div>
-      <h3>{{ book.title }}</h3>
+    <div class="book-box">
+      <img class="book-image" src="{{ api + book.isbn }}-M.jpg" alt="{{ book.title }}">
+      <h3 class="title">{{ book.title }}</h3>
+      <p class="name">{{ book.name }}</p>
     </div>
     {% endfor %}
+  </div>
 
-  </body>
+  <script>
+    function clearSearch() {
+      document.querySelector('input[name="query"]').value = '';
+      document.querySelector('form').submit();
+    }
+
+    document.getElementById('sort-select').addEventListener('change', function() {
+      const sortOrder = this.value;
+      const bookContainer = document.querySelector('.book-container');
+      const bookBoxes = Array.from(bookContainer.querySelectorAll('.book-box'));
+
+      bookBoxes.sort((a, b) => {
+        const aText = a.querySelector(`.${sortOrder}`).textContent.trim().toLowerCase();
+        const bText = b.querySelector(`.${sortOrder}`).textContent.trim().toLowerCase();
+        return aText.localeCompare(bText);
+      });
+
+      bookContainer.innerHTML = ''; // Clear existing content
+
+      bookBoxes.forEach(bookBox => {
+        bookContainer.appendChild(bookBox);
+      });
+    });
+  </script>
+
+</body>
 </html>

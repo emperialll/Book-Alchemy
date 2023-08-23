@@ -2,6 +2,7 @@
 import os
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import or_
 from datetime import datetime
 
 # Create an instance of the Flask application
@@ -18,9 +19,26 @@ db.init_app(app)
 # Define a route and corresponding view function
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def home():
-    return render_template('home.html')
+    from data_models import Author, Book
+    BOOK_COVER_API = 'https://covers.openlibrary.org/b/isbn/'
+
+    if request.method == 'POST':
+        query = request.form.get('query')
+        if query:
+            # Perform a search using the 'LIKE' operator with SQLAlchemy
+            # Search for matches in book titles or author names
+            books = Book.query.join(Author, Book.author_id == Author.id).add_columns(
+                Book.title, Book.isbn, Book.publication_year, Author.name).filter(
+                or_(Book.title.ilike(f"%{query}%"), Author.name.ilike(f"%{query}%"))).all()
+            return render_template('home.html', books=books, api=BOOK_COVER_API)
+
+    # Fetch all books and authors if no search query or GET request
+    books = Book.query.join(Author, Book.author_id == Author.id).add_columns(
+        Book.title, Book.isbn, Book.publication_year, Author.name).all()
+
+    return render_template('home.html', books=books, api=BOOK_COVER_API)
 
 
 @app.route('/add_author', methods=['GET', 'POST'])
