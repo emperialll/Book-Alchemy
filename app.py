@@ -1,12 +1,16 @@
 """Imports required packages from flask and flask_sqlalchemy"""
 import os
-from flask import Flask, render_template, request
+import secrets
+from flask import Flask, flash, redirect, render_template, request, url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
 from datetime import datetime
 
 # Create an instance of the Flask application
 app = Flask(__name__)
+# # Generate a secure random key
+# secret_key = secrets.token_hex(16)  # Generates a 32-character hexadecimal key
+# app.secret_key = secret_key
 
 # Setting the database URI
 db_path = os.path.abspath('data/library.sqlite')
@@ -36,7 +40,7 @@ def home():
 
     # Fetch all books and authors if no search query or GET request
     books = Book.query.join(Author, Book.author_id == Author.id).add_columns(
-        Book.title, Book.isbn, Book.publication_year, Author.name).all()
+        Book.id, Book.title, Book.isbn, Book.publication_year, Book.author_id, Author.name).all()
 
     return render_template('home.html', books=books, api=BOOK_COVER_API)
 
@@ -93,6 +97,31 @@ def add_book():
 
     # Render the "add book" form template for GET requests
     return render_template('add_book.html', authors=authors)
+
+
+@app.route('/book/<book_id>/delete', methods=['POST'])
+def delete_book(book_id):
+    from data_models import Author, Book
+    try:
+        book = Book.query.get(int(book_id))
+        if book:
+            author = Author.query.get(book.author_id)
+            other_books_by_author = Book.query.filter_by(
+                author_id=book.author_id).count()
+            if other_books_by_author == 1:
+                print("tooye if")
+                db.session.delete(author)
+            db.session.delete(book)
+            db.session.commit()
+            print('Book deleted successfully!')
+            return redirect(url_for('home'))
+        else:
+            return 'Book not found.'
+
+    except Exception as e:
+        db.session.rollback()  # Rollback the transaction in case of an error
+        print("Error:", str(e))
+        return 'An error occurred while deleting the book.'
 
 
 if __name__ == '__main__':
