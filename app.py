@@ -110,7 +110,9 @@ def delete_book(book_id):
                 author_id=book.author_id).count()
             if other_books_by_author == 1:
                 print("tooye if")
+                author = db.session.merge(author)
                 db.session.delete(author)
+            book = db.session.merge(book)
             db.session.delete(book)
             db.session.commit()
             print('Book deleted successfully!')
