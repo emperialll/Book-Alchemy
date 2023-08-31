@@ -2,9 +2,10 @@
 import os
 import secrets
 from flask import Flask, flash, redirect, render_template, request, url_for
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
 from datetime import datetime
+
+from data_models import db, Author, Book
 
 # Create an instance of the Flask application
 app = Flask(__name__)
@@ -17,7 +18,6 @@ db_path = os.path.abspath('data/library.sqlite')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 
 # Initialize the SQLAlchemy extension with the Flask application
-db = SQLAlchemy()
 db.init_app(app)
 
 # Define a route and corresponding view function

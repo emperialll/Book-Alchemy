@@ -1,5 +1,8 @@
 from sqlalchemy import Column, Date, ForeignKey, Integer, String
-from app import app, db  # Import db instance from app.py
+from flask_sqlalchemy import SQLAlchemy
+
+
+db = SQLAlchemy()
 
 
 class Author(db.Model):
